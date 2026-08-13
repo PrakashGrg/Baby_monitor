@@ -4,6 +4,7 @@ import { SettingsStackParamList } from '../types/navigation';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import ChangePasswordScreen from '../screens/profile/ChangePasswordScreen';
+import SystemLogsScreen from '../screens/settings/SystemLogsScreen';
 
 const Stack = createNativeStackNavigator<SettingsStackParamList>();
 
@@ -13,6 +14,7 @@ export default function SettingsNavigator() {
       <Stack.Screen name="SettingsMain" component={SettingsScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+      <Stack.Screen name="SystemLogs" component={SystemLogsScreen} />
     </Stack.Navigator>
   );
 }

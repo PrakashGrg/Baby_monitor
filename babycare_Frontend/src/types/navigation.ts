@@ -34,4 +34,5 @@ export type SettingsStackParamList = {
   SettingsMain: undefined;
   EditProfile: undefined;
   ChangePassword: undefined;
+  SystemLogs: undefined;
 };

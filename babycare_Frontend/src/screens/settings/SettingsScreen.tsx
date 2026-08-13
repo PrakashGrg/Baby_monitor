@@ -7,6 +7,7 @@ import Card from '../../components/Card';
 import Button from '../../components/Button';
 import { useAuthStore } from '../../store/authStore';
 import { deleteAccount } from '../../api/auth';
+import { useThemeStore } from '../../store/themeStore';
 
 type NavigationProp = NativeStackNavigationProp<SettingsStackParamList, 'SettingsMain'>;
 
@@ -16,7 +17,8 @@ export default function SettingsScreen() {
   const logout = useAuthStore((state) => state.logout);
 
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const isDark = useThemeStore((state) => state.isDark);
+  const toggleDark = useThemeStore((state) => state.toggleDark);
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to log out?', [
@@ -67,11 +69,20 @@ export default function SettingsScreen() {
             </View>
           </View>
           <View className="h-px bg-slate-100 mb-3" />
+
+
           <TouchableOpacity className="py-2" onPress={() => navigation.navigate('EditProfile')}>
             <Text className="text-primary-600 font-medium">Edit Profile</Text>
           </TouchableOpacity>
           <TouchableOpacity className="py-2" onPress={() => navigation.navigate('ChangePassword')}>
             <Text className="text-primary-600 font-medium">Change Password</Text>
+          </TouchableOpacity>
+        </Card>
+
+        <Text className="text-sm font-semibold text-slate-400 uppercase mb-2">Diagnostics</Text>
+        <Card className="mb-6">
+          <TouchableOpacity className="py-2" onPress={() => navigation.navigate('SystemLogs')}>
+            <Text className="text-primary-600 font-medium">View System Logs</Text>
           </TouchableOpacity>
         </Card>
 
@@ -94,13 +105,13 @@ export default function SettingsScreen() {
           <View className="flex-row items-center justify-between py-2">
             <View>
               <Text className="text-slate-900 font-medium">Dark Mode</Text>
-              <Text className="text-slate-400 text-xs mt-0.5">Coming soon</Text>
+              <Text className="text-slate-400 text-xs mt-0.5">Easier on the eyes at night</Text>
             </View>
             <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
-              disabled
+              value={isDark}
+              onValueChange={toggleDark}
               trackColor={{ false: '#e2e8f0', true: '#93c5fd' }}
+              thumbColor={isDark ? '#2563eb' : '#f4f4f5'}
             />
           </View>
         </Card>
