@@ -1,14 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import Card from '../../components/Card';
-import { MainTabParamList } from '../../types/navigation';
 import { getBabies, Baby } from '../../api/babies';
 import { getEvents, Event } from '../../api/events';
 import { useAuthStore } from '../../store/authStore';
 
-type NavigationProp = BottomTabNavigationProp<MainTabParamList, 'Dashboard'>;
+type NavigationProp = any;
 
 export default function DashboardScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -102,6 +100,29 @@ export default function DashboardScreen() {
             <Text className="text-3xl mb-2">📋</Text>
             <Text className="text-white font-semibold text-base">Event History</Text>
             <Text className="text-purple-100 text-xs mt-1">View all activity</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Monitor / Viewer quick links */}
+        <View className="flex-row gap-3 mb-6">
+          <TouchableOpacity
+            className="flex-1 bg-danger rounded-2xl p-5"
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('BabySelect', { mode: 'monitor' })}
+          >
+            <Text className="text-3xl mb-2">📹</Text>
+            <Text className="text-white font-semibold text-base">Start Monitoring</Text>
+            <Text className="text-red-100 text-xs mt-1">Use this phone as camera</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-1 bg-success rounded-2xl p-5"
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('BabySelect', { mode: 'viewer' })}
+          >
+            <Text className="text-3xl mb-2">👁️</Text>
+            <Text className="text-white font-semibold text-base">View Live Feed</Text>
+            <Text className="text-green-100 text-xs mt-1">Watch from another device</Text>
           </TouchableOpacity>
         </View>
 

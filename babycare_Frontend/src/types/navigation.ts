@@ -5,6 +5,14 @@ export type RootStackParamList = {
   Main: undefined;
 };
 
+export type RootAppStackParamList = {
+  Auth: undefined;
+  MainTabs: undefined;
+  BabySelect: { mode: 'monitor' | 'viewer' };
+  Monitor: { babyId: number; babyName: string };
+  Viewer: { babyId: number; babyName: string };
+};
+
 export type MainTabParamList = {
   Dashboard: undefined;
   Babies: undefined;
