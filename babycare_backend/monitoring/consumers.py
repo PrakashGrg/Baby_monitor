@@ -41,9 +41,11 @@ class MonitorConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
+        await self._log('INFO', 'Client connected')
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self._log('WARNING', f'Client disconnected ({self.role})')
 
     async def receive(self, text_data=None, bytes_data=None):
         if text_data:
@@ -59,6 +61,7 @@ class MonitorConsumer(AsyncWebsocketConsumer):
 
         if 'role' in data:
             self.role = data['role']  # 'monitor' or 'viewer'
+            await self._log('INFO', f'Role set: {self.role}')
 
     async def _handle_binary(self, bytes_data):
         if len(bytes_data) < 2:
@@ -102,6 +105,7 @@ class MonitorConsumer(AsyncWebsocketConsumer):
 
     async def _create_event_and_broadcast(self, event_type: str, jpeg_bytes):
         event_data = await self._save_event(event_type, jpeg_bytes)
+        await self._log('INFO', f'{event_type.capitalize()} detected, event saved')
 
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -110,6 +114,7 @@ class MonitorConsumer(AsyncWebsocketConsumer):
                 'data': event_data,
             }
         )
+        await self._log('INFO', 'Alert broadcast to room')
 
     @database_sync_to_async
     def _save_event(self, event_type: str, jpeg_bytes):
@@ -129,6 +134,14 @@ class MonitorConsumer(AsyncWebsocketConsumer):
             'snapshot': event.snapshot.url if event.snapshot else None,
             'baby_id': baby.id,
         }
+
+    @database_sync_to_async
+    def _log(self, level: str, message: str):
+        from .models import SystemLog
+        try:
+            SystemLog.objects.create(baby_id=self.baby_id, level=level, message=message)
+        except Exception:
+            pass  # never let logging break the main detection/streaming flow
 
     # ---- Group message handlers (called via channel_layer.group_send) ----
 

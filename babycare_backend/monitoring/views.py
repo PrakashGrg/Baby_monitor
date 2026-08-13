@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
-from .models import Event
-from .serializers import EventSerializer
+from .models import Event, SystemLog
+from .serializers import EventSerializer, SystemLogSerializer
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -17,3 +17,11 @@ class EventViewSet(viewsets.ModelViewSet):
         if event_type:
             qs = qs.filter(type=event_type)
         return qs
+
+
+class SystemLogViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = SystemLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return SystemLog.objects.filter(baby__user=self.request.user)

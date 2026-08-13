@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event
+from .models import Event, SystemLog
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -9,3 +9,11 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['id', 'baby', 'baby_name', 'type', 'timestamp', 'snapshot']
         read_only_fields = ['id', 'timestamp', 'baby_name']
+
+
+class SystemLogSerializer(serializers.ModelSerializer):
+    baby_name = serializers.CharField(source='baby.name', read_only=True, default=None)
+
+    class Meta:
+        model = SystemLog
+        fields = ['id', 'baby', 'baby_name', 'level', 'message', 'timestamp']

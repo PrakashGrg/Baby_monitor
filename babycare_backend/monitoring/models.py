@@ -15,3 +15,22 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.type} - {self.baby.name} - {self.timestamp}"
+
+
+class SystemLog(models.Model):
+    LEVEL_CHOICES = (
+        ('INFO', 'Info'),
+        ('WARNING', 'Warning'),
+        ('ERROR', 'Error'),
+    )
+
+    baby = models.ForeignKey(Baby, on_delete=models.CASCADE, related_name='system_logs', null=True, blank=True)
+    level = models.CharField(max_length=10, choices=LEVEL_CHOICES, default='INFO')
+    message = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"[{self.level}] {self.message} - {self.timestamp}"

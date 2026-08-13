@@ -15,7 +15,7 @@ import numpy as np
 import cv2
 import websockets
 
-BABY_ID = 1
+BABY_ID = 2  # "Motu chet"
 WS_URL = f"ws://127.0.0.1:8000/ws/monitor/{BABY_ID}/"
 
 
