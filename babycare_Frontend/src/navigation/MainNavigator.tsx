@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import { MainTabParamList } from '../types/navigation';
 import DashboardScreen from '../screens/dashboard/DashboardScreen';
 import BabiesNavigator from './BabiesNavigator';
@@ -8,10 +9,17 @@ import SettingsNavigator from './SettingsNavigator';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
+const ICONS: Record<keyof MainTabParamList, keyof typeof Ionicons.glyphMap> = {
+  Dashboard: 'home',
+  Babies: 'happy',
+  Events: 'list',
+  Settings: 'settings',
+};
+
 export default function MainNavigator() {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: '#2563eb',
         tabBarInactiveTintColor: '#94a3b8',
@@ -22,7 +30,10 @@ export default function MainNavigator() {
           paddingTop: 6,
           height: 60,
         },
-      }}
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name={ICONS[route.name as keyof MainTabParamList]} size={size} color={color} />
+        ),
+      })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Babies" component={BabiesNavigator} />
