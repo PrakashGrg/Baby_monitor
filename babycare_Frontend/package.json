@@ -4,6 +4,9 @@
   "main": "index.ts",
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native/babel-preset": "0.86.2",
+    "@react-native/metro-babel-transformer": "0.86.2",
+    "@react-native/metro-config": "0.86.2",
     "@react-navigation/bottom-tabs": "^7.18.16",
     "@react-navigation/native": "^7.3.16",
     "@react-navigation/native-stack": "^7.18.8",
