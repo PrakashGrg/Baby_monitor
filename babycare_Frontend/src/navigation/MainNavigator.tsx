@@ -4,7 +4,7 @@ import { MainTabParamList } from '../types/navigation';
 import DashboardScreen from '../screens/dashboard/DashboardScreen';
 import BabiesNavigator from './BabiesNavigator';
 import EventsScreen from '../screens/events/EventsScreen';
-import SettingsScreen from '../screens/settings/SettingsScreen';
+import SettingsNavigator from './SettingsNavigator';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -27,7 +27,7 @@ export default function MainNavigator() {
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Babies" component={BabiesNavigator} />
       <Tab.Screen name="Events" component={EventsScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Settings" component={SettingsNavigator} />
     </Tab.Navigator>
   );
 }

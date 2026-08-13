@@ -21,3 +21,9 @@ export type BabiesStackParamList = {
 export type EventsStackParamList = {
   EventList: undefined;
 };
+
+export type SettingsStackParamList = {
+  SettingsMain: undefined;
+  EditProfile: undefined;
+  ChangePassword: undefined;
+};

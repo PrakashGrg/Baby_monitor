@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { SettingsStackParamList } from '../../types/navigation';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import { useAuthStore } from '../../store/authStore';
 import { deleteAccount } from '../../api/auth';
 
+type NavigationProp = NativeStackNavigationProp<SettingsStackParamList, 'SettingsMain'>;
+
 export default function SettingsScreen() {
+  const navigation = useNavigation<NavigationProp>();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
 
@@ -62,10 +67,10 @@ export default function SettingsScreen() {
             </View>
           </View>
           <View className="h-px bg-slate-100 mb-3" />
-          <TouchableOpacity className="py-2">
+          <TouchableOpacity className="py-2" onPress={() => navigation.navigate('EditProfile')}>
             <Text className="text-primary-600 font-medium">Edit Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="py-2">
+          <TouchableOpacity className="py-2" onPress={() => navigation.navigate('ChangePassword')}>
             <Text className="text-primary-600 font-medium">Change Password</Text>
           </TouchableOpacity>
         </Card>
