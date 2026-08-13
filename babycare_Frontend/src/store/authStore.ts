@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { loginUser, registerUser, RegisterPayload } from '../api/auth';
+import { loginUser, registerUser, getProfile, RegisterPayload } from '../api/auth';
 
 interface User {
   id: number;
@@ -28,7 +28,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     const data = await loginUser({ username, password });
     await AsyncStorage.setItem('access_token', data.access);
     await AsyncStorage.setItem('refresh_token', data.refresh);
-    set({ isAuthenticated: true });
+    const profile = await getProfile();
+    set({ user: profile, isAuthenticated: true });
   },
 
   register: async (payload) => {
@@ -45,6 +46,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   restoreSession: async () => {
     const token = await AsyncStorage.getItem('access_token');
-    set({ isAuthenticated: !!token, isLoading: false });
+    if (token) {
+      try {
+        const profile = await getProfile();
+        set({ user: profile, isAuthenticated: true, isLoading: false });
+      } catch {
+        set({ isAuthenticated: false, isLoading: false });
+      }
+    } else {
+      set({ isLoading: false });
+    }
   },
 }));

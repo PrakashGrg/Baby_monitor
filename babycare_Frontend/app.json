@@ -26,6 +26,10 @@
       "eas": {
         "projectId": "14b92fe4-9ebe-46ef-a381-c942ea19af6b"
       }
-    }
+    },
+    "plugins": [
+      "expo-audio",
+      "@react-native-community/datetimepicker"
+    ]
   }
 }
