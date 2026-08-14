@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY', default='dev-secret-key-change-me')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.18.254']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.18.254', 'clad-atlas-griminess.ngrok-free.dev']  # add your ngrok URL here
 
 
 

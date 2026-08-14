@@ -6,7 +6,7 @@ import { useAudioRecorder, RecordingPresets, AudioModule } from 'expo-audio';
 import * as FileSystem from 'expo-file-system';
 import { toByteArray } from 'base64-js';
 
-const WS_BASE = 'ws://192.168.18.254:8000/ws/monitor';
+const WS_BASE = "wss://clad-atlas-griminess.ngrok-free.dev/ws/monitor";
 
 let globalMonitorSocket: WebSocket | null = null;
 

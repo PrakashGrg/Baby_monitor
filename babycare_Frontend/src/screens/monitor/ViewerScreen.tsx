@@ -3,7 +3,7 @@ import { View, Text, SafeAreaView, TouchableOpacity, Image, ActivityIndicator } 
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { fromByteArray } from 'base64-js';
 
-const WS_BASE = 'ws://192.168.18.254:8000/ws/monitor';
+const WS_BASE = "wss://clad-atlas-griminess.ngrok-free.dev/ws/monitor";
 
 export default function ViewerScreen() {
   const navigation = useNavigation<any>();

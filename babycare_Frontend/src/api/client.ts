@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // IMPORTANT: Replace with YOUR computer's local IP address (same one Expo showed you, e.g. 192.168.18.254)
 // Do NOT use 127.0.0.1 or localhost — your phone can't reach that.
-const BASE_URL = 'http://192.168.18.254:8000/api';
+const BASE_URL = "https://clad-atlas-griminess.ngrok-free.dev/api";
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
