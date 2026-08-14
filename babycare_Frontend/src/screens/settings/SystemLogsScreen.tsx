@@ -51,12 +51,12 @@ export default function SystemLogsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background dark:bg-slate-900">
       <View className="px-5 pt-4 pb-2">
         <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
           <Text className="text-primary-600 text-base">← Back</Text>
         </TouchableOpacity>
-        <Text className="text-2xl font-bold text-slate-900">System Logs</Text>
+        <Text className="text-2xl font-bold text-slate-900 dark:text-white">System Logs</Text>
         <Text className="text-slate-500 mt-1">Operational activity and diagnostics</Text>
       </View>
 
@@ -86,7 +86,7 @@ export default function SystemLogsScreen() {
                   <Text className="text-sm">{style.icon}</Text>
                 </View>
                 <View className="flex-1">
-                  <Text className="text-slate-900 font-medium">{item.message}</Text>
+                  <Text className="text-slate-900 dark:text-white font-medium">{item.message}</Text>
                   <Text className="text-slate-400 text-xs mt-0.5">
                     {item.baby_name ? `${item.baby_name} • ` : ''}
                     {formatTime(item.timestamp)}

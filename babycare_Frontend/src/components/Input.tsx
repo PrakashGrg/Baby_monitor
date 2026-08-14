@@ -12,12 +12,12 @@ export default function Input({ label, error, ...props }: InputProps) {
   return (
     <View className="w-full mb-4">
       {label && (
-        <Text className="text-sm font-medium text-slate-700 mb-1.5">{label}</Text>
+        <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{label}</Text>
       )}
       <TextInput
         className={`
-          w-full bg-white rounded-xl px-4 py-3.5 text-base text-slate-900
-          border ${error ? 'border-danger' : focused ? 'border-primary-600' : 'border-slate-200'}
+          w-full bg-white dark:bg-slate-800 rounded-xl px-4 py-3.5 text-base text-slate-900 dark:text-white
+          border ${error ? 'border-danger' : focused ? 'border-primary-600' : 'border-slate-200 dark:border-slate-700'}
         `}
         placeholderTextColor="#94a3b8"
         onFocus={() => setFocused(true)}

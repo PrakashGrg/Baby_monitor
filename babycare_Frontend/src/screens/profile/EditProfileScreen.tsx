@@ -38,13 +38,13 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background dark:bg-slate-900">
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6 py-2 -ml-1 self-start">
   <Text className="text-primary-600 text-lg font-semibold">← Back</Text>
-</TouchableOpacity>
+</TouchableOpacity>a
 
-        <Text className="text-2xl font-bold text-slate-900 mb-6">Edit Profile</Text>
+        <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Edit Profile</Text>
 
         <Input label="Username" value={username} onChangeText={setUsername} autoCapitalize="none" />
         <Input label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
