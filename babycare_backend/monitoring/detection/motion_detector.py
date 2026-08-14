@@ -3,7 +3,7 @@ import numpy as np
 
 
 class MotionDetector:
-    def __init__(self, diff_threshold=25, motion_pixel_ratio=0.02):
+    def __init__(self, diff_threshold=35, motion_pixel_ratio=0.08):
         self.prev_frame = None
         self.diff_threshold = diff_threshold
         self.motion_pixel_ratio = motion_pixel_ratio
@@ -18,7 +18,16 @@ class MotionDetector:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
+        # Normalize size so frame differencing always works, even if
+        # incoming frames vary in resolution between captures.
+        gray = cv2.resize(gray, (320, 240))
+
         if self.prev_frame is None:
+            self.prev_frame = gray
+            return False
+
+        if self.prev_frame.shape != gray.shape:
+            # Safety net in case resize above still mismatches somehow
             self.prev_frame = gray
             return False
 
@@ -30,4 +39,5 @@ class MotionDetector:
         ratio = changed_pixels / total_pixels
 
         self.prev_frame = gray
+
         return ratio > self.motion_pixel_ratio
