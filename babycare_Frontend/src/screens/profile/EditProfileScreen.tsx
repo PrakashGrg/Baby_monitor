@@ -40,9 +40,9 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ padding: 20 }}>
-        <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-          <Text className="text-primary-600 text-base">← Back</Text>
-        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6 py-2 -ml-1 self-start">
+  <Text className="text-primary-600 text-lg font-semibold">← Back</Text>
+</TouchableOpacity>
 
         <Text className="text-2xl font-bold text-slate-900 mb-6">Edit Profile</Text>
 

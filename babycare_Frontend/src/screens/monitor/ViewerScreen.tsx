@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { fromByteArray } from 'base64-js';
+import { sendLocalAlert, requestNotificationPermission } from '../../utils/notifications';
 
 const WS_BASE = "wss://clad-atlas-griminess.ngrok-free.dev/ws/monitor";
 
 export default function ViewerScreen() {
-  const navigation = useNavigation<any>();
-  const route = useRoute<RouteProp<{ params: { babyId: number; babyName: string } }, 'params'>>();
-  const { babyId, babyName } = route.params;
+    const navigation = useNavigation<any>();
+    const route = useRoute<RouteProp<{ params: { babyId: number; babyName: string } }, 'params'>>();
+    const { babyId, babyName } = route.params;
 
   const wsRef = useRef<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
@@ -16,6 +17,7 @@ export default function ViewerScreen() {
   const [lastAlert, setLastAlert] = useState<string | null>(null);
 
   useEffect(() => {
+    requestNotificationPermission();
     const ws = new WebSocket(`${WS_BASE}/${babyId}/`);
     ws.binaryType = 'arraybuffer';
     wsRef.current = ws;
@@ -26,15 +28,16 @@ export default function ViewerScreen() {
     };
 
     ws.onmessage = (event) => {
-      if (typeof event.data === 'string') {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.alert) {
-            setLastAlert(`${data.type === 'motion' ? '🚶 Motion' : '👶 Cry'} detected`);
-            setTimeout(() => setLastAlert(null), 4000);
-          }
-        } catch {}
-      } else {
+  if (typeof event.data === 'string') {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.alert) {
+        setLastAlert(`${data.type === 'motion' ? '🚶 Motion' : '👶 Cry'} detected`);
+        setTimeout(() => setLastAlert(null), 4000);
+        sendLocalAlert(data.type, babyName);
+      }
+    } catch {}
+  } else {
         const bytes = new Uint8Array(event.data as ArrayBuffer);
         const base64 = fromByteArray(bytes);
         setFrameUri(`data:image/jpeg;base64,${base64}`);

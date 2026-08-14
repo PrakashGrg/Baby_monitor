@@ -3,12 +3,14 @@ import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useAudioRecorder, RecordingPresets, AudioModule } from 'expo-audio';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { toByteArray } from 'base64-js';
+import { sendLocalAlert, requestNotificationPermission } from '../../utils/notifications';
 
 const WS_BASE = "wss://clad-atlas-griminess.ngrok-free.dev/ws/monitor";
 
 let globalMonitorSocket: WebSocket | null = null;
+let globalAudioLoopActive = false;
 
 export default function MonitorScreen() {
   const navigation = useNavigation<any>();
@@ -28,7 +30,9 @@ export default function MonitorScreen() {
   const [lastAlert, setLastAlert] = useState<string | null>(null);
 
   const startAudioLoop = async (ws: WebSocket) => {
-    audioLoopRef.current = true;
+  if (globalAudioLoopActive) return; // already running, survive remount
+  globalAudioLoopActive = true;
+  audioLoopRef.current = true;
 
     const { granted } = await AudioModule.requestRecordingPermissionsAsync();
     if (!granted) {
@@ -74,9 +78,10 @@ export default function MonitorScreen() {
   };
 
   useEffect(() => {
-    console.log('🔵 Monitor effect running, granted:', permission?.granted);
+  console.log('🔵 Monitor effect running, granted:', permission?.granted);
+  requestNotificationPermission();
 
-    if (!permission?.granted) {
+  if (!permission?.granted) {
       requestPermission();
       return;
     }
@@ -119,16 +124,17 @@ export default function MonitorScreen() {
     };
 
     ws.onmessage = (event) => {
-      if (typeof event.data === 'string') {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.alert) {
-            setLastAlert(`${data.type === 'motion' ? '🚶 Motion' : '👶 Cry'} detected`);
-            setTimeout(() => setLastAlert(null), 4000);
-          }
-        } catch {}
+  if (typeof event.data === 'string') {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.alert) {
+        setLastAlert(`${data.type === 'motion' ? '🚶 Motion' : '👶 Cry'} detected`);
+        setTimeout(() => setLastAlert(null), 4000);
+        sendLocalAlert(data.type, babyName);
       }
-    };
+    } catch {}
+  }
+};
 
     ws.onerror = (err) => {
       console.error('WebSocket error:', err);
@@ -143,26 +149,26 @@ export default function MonitorScreen() {
     };
 
     return () => {
-      console.log('🔴 Monitor effect CLEANUP running (socket left open intentionally)');
-      audioLoopRef.current = false;
-      if (startTimeoutRef.current) clearTimeout(startTimeoutRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      // Intentionally NOT closing the socket here — React dev-mode double-invokes
-      // this effect, which would kill a socket we just opened. Real cleanup
-      // happens via the Stop button and handleStop() below.
-    };
+  console.log('🔴 Monitor effect CLEANUP running (socket + audio left running intentionally)');
+  if (startTimeoutRef.current) clearTimeout(startTimeoutRef.current);
+  if (intervalRef.current) clearInterval(intervalRef.current);
+  // Intentionally NOT closing the socket or stopping audioLoopRef here —
+  // React dev-mode double-invokes this effect, which would kill work
+  // we just started. Real cleanup happens via handleStop() below.
+};
   }, [permission?.granted]);
 
   const handleStop = () => {
-    audioLoopRef.current = false;
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (startTimeoutRef.current) clearTimeout(startTimeoutRef.current);
-    if (globalMonitorSocket) {
-      globalMonitorSocket.close();
-      globalMonitorSocket = null;
-    }
-    navigation.goBack();
-  };
+  audioLoopRef.current = false;
+  globalAudioLoopActive = false;
+  if (intervalRef.current) clearInterval(intervalRef.current);
+  if (startTimeoutRef.current) clearTimeout(startTimeoutRef.current);
+  if (globalMonitorSocket) {
+    globalMonitorSocket.close();
+    globalMonitorSocket = null;
+  }
+  navigation.goBack();
+};
 
   if (!permission) return <SafeAreaView className="flex-1 bg-black" />;
 
@@ -191,9 +197,9 @@ export default function MonitorScreen() {
 
       <SafeAreaView className="absolute top-0 left-0 right-0">
         <View className="flex-row items-center justify-between px-5 pt-3">
-          <TouchableOpacity className="bg-black/50 px-4 py-2 rounded-full" onPress={handleStop}>
-            <Text className="text-white font-medium">✕ Stop</Text>
-          </TouchableOpacity>
+          <TouchableOpacity className="bg-black/50 px-6 py-4 rounded-full" onPress={handleStop}>
+  <Text className="text-white font-semibold text-base">✕ Stop</Text>
+</TouchableOpacity>
           <View className="bg-black/50 px-4 py-2 rounded-full flex-row items-center">
             <View className={`w-2 h-2 rounded-full mr-2 ${connected ? 'bg-red-500' : 'bg-slate-400'}`} />
             <Text className="text-white font-medium">{connected ? 'LIVE' : 'Connecting...'}</Text>

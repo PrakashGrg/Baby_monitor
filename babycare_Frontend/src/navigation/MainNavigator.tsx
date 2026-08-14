@@ -26,12 +26,16 @@ export default function MainNavigator() {
         tabBarStyle: {
           borderTopWidth: 1,
           borderTopColor: '#e2e8f0',
-          paddingBottom: 6,
-          paddingTop: 6,
-          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 68,
         },
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name={ICONS[route.name as keyof MainTabParamList]} size={size} color={color} />
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
+        tabBarIcon: ({ color }) => (
+          <Ionicons name={ICONS[route.name as keyof MainTabParamList]} size={26} color={color} />
         ),
       })}
     >
