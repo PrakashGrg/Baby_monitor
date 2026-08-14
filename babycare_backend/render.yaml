@@ -1,4 +1,4 @@
-services:
+﻿services:
   - type: web
     name: babycare-backend
     env: python
@@ -19,11 +19,11 @@ services:
           name: babycare-redis
           property: connectionString
 
-databases:
-  - name: babycare-db
-    plan: free
-
   - type: redis
     name: babycare-redis
     plan: free
     ipAllowList: []
+
+databases:
+  - name: babycare-db
+    plan: free
