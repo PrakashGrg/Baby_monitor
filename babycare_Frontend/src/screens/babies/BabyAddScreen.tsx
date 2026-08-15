@@ -70,7 +70,7 @@ export default function BabyAddScreen() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           paddingHorizontal: 24,
-          paddingTop: 14,
+          paddingTop: 40,
           paddingBottom: 40,
         }}
       >

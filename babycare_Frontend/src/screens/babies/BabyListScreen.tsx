@@ -123,7 +123,7 @@ export default function BabyListScreen() {
       {/* HEADER */}
       {/* ===================================== */}
 
-      <View className="px-6 pt-14 pb-4">
+      <View className="px-6 pt-20 pb-4">
 
         <View className="flex-row items-center justify-between">
 

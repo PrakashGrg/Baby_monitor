@@ -15,7 +15,7 @@ export type RootAppStackParamList = {
 
 export type MainTabParamList = {
   Dashboard: undefined;
-  Babies: undefined;
+  Rooms: undefined;
   Events: undefined;
   Settings: undefined;
 };

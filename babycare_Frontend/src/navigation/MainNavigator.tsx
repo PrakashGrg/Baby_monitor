@@ -11,8 +11,8 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const ICONS: Record<keyof MainTabParamList, keyof typeof Ionicons.glyphMap> = {
   Dashboard: 'home',
-  Babies: 'happy',
-  Events: 'list',
+  Rooms: 'business',
+  Events: 'notifications',
   Settings: 'settings',
 };
 
@@ -40,7 +40,7 @@ export default function MainNavigator() {
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Babies" component={BabiesNavigator} />
+      <Tab.Screen name="Rooms" component={BabiesNavigator} />
       <Tab.Screen name="Events" component={EventsScreen} />
       <Tab.Screen name="Settings" component={SettingsNavigator} />
     </Tab.Navigator>

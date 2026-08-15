@@ -239,7 +239,7 @@ export default function DashboardScreen() {
 
         <TouchableOpacity
           activeOpacity={0.75}
-          onPress={() => navigation.navigate('Babies')}
+          onPress={() => navigation.navigate('Rooms')}
           className="bg-slate-900 rounded-2xl p-5 mb-3"
         >
           <View className="flex-row items-center">

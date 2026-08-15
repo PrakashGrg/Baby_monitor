@@ -1,6 +1,5 @@
 import json
 import time
-from io import BytesIO
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -17,21 +16,14 @@ class MonitorConsumer(AsyncWebsocketConsumer):
     Single WebSocket endpoint used by BOTH the Monitor phone (sends video/audio)
     and the Viewer phone (only receives). All clients for a given baby join the
     same 'room' group.
-
-    Binary message protocol (from Monitor phone):
-      - First byte 0x01 -> rest of payload is a JPEG video frame
-      - First byte 0x02 -> rest of payload is a raw PCM16 audio chunk
-
-    Text message protocol (JSON control messages), e.g.:
-      { "role": "monitor" }  or  { "role": "viewer" }
     """
 
-    EVENT_COOLDOWN_SECONDS = 5  # avoid spamming duplicate events
+    EVENT_COOLDOWN_SECONDS = 5
 
     async def connect(self):
         self.baby_id = self.scope['url_route']['kwargs']['baby_id']
         self.room_group_name = f'baby_{self.baby_id}'
-        self.role = 'viewer'  # default until told otherwise
+        self.role = 'viewer'
 
         self.motion_detector = MotionDetector()
         self.cry_detector = CryDetector()
@@ -60,7 +52,7 @@ class MonitorConsumer(AsyncWebsocketConsumer):
             return
 
         if 'role' in data:
-            self.role = data['role']  # 'monitor' or 'viewer'
+            self.role = data['role']
             await self._log('INFO', f'Role set: {self.role}')
 
     async def _handle_binary(self, bytes_data):
@@ -76,7 +68,6 @@ class MonitorConsumer(AsyncWebsocketConsumer):
             await self._handle_audio_chunk(payload)
 
     async def _handle_video_frame(self, jpeg_bytes: bytes):
-        # 1. Relay the live frame to everyone in the room (so Viewer sees it)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -86,13 +77,13 @@ class MonitorConsumer(AsyncWebsocketConsumer):
             }
         )
 
-        # 2. Run motion detection
-        is_motion = self.motion_detector.detect(jpeg_bytes)
+        is_motion, annotated_bytes = self.motion_detector.detect(jpeg_bytes)
         if is_motion:
             now = time.time()
             if now - self.last_motion_event_time > self.EVENT_COOLDOWN_SECONDS:
                 self.last_motion_event_time = now
-                await self._create_event_and_broadcast('motion', jpeg_bytes)
+                snapshot_bytes = annotated_bytes if annotated_bytes else jpeg_bytes
+                await self._create_event_and_broadcast('motion', snapshot_bytes)
 
     async def _handle_audio_chunk(self, pcm_bytes: bytes):
         is_cry = self.cry_detector.detect(pcm_bytes)
@@ -100,7 +91,6 @@ class MonitorConsumer(AsyncWebsocketConsumer):
             now = time.time()
             if now - self.last_cry_event_time > self.EVENT_COOLDOWN_SECONDS:
                 self.last_cry_event_time = now
-                # No frame tied directly to audio chunk, so save without snapshot
                 await self._create_event_and_broadcast('cry', None)
 
     async def _create_event_and_broadcast(self, event_type: str, jpeg_bytes):
@@ -141,12 +131,9 @@ class MonitorConsumer(AsyncWebsocketConsumer):
         try:
             SystemLog.objects.create(baby_id=self.baby_id, level=level, message=message)
         except Exception:
-            pass  # never let logging break the main detection/streaming flow
-
-    # ---- Group message handlers (called via channel_layer.group_send) ----
+            pass
 
     async def video_frame_message(self, event):
-        # Don't echo the frame back to the sender (Monitor phone) — only forward to others (Viewer)
         if event['sender_channel'] == self.channel_name:
             return
         await self.send(bytes_data=event['frame'])
