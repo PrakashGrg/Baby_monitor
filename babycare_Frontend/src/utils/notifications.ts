@@ -1,14 +1,19 @@
 import * as Notifications from 'expo-notifications';
 
-Notifications.setNotificationHandler({
+let handlerRegistered = false;
+
+if (!handlerRegistered) {
+  handlerRegistered = true;
+  Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,
     shouldShowList: true,
-  }),
-});
+    }),
+  });
+}
 
 export async function requestNotificationPermission() {
   const { status } = await Notifications.requestPermissionsAsync();

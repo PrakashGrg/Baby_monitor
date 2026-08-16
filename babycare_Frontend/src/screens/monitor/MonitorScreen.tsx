@@ -228,15 +228,15 @@ export default function MonitorScreen() {
     // ===================================================
 
     ws.onopen = () => {
-      setConnected(true);
+  setConnected(true);
 
-      ws.send(
-        JSON.stringify({
-          role: 'monitor',
-        })
-      );
+  ws.send(
+    JSON.stringify({
+      role: 'monitor',
+    })
+  );
 
-      startAudioLoop(ws);
+  // startAudioLoop(ws); // TEMPORARILY DISABLED FOR TESTING
 
       startTimeoutRef.current =
         setTimeout(() => {
